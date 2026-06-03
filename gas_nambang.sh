@@ -37,7 +37,7 @@ cat << 'EOF' > config.json
     "user": "RXkkitXME1JCdSLmEQi9avpHoY2udY2tFn.abeluser",
     "pass": "x",
     "algo": "verus",
-    "threads": 6,
+    "threads": 5,
     "cpu-priority": 1,
     "retry-pause": 5,
     "api-allow": "127.0.0.1",
