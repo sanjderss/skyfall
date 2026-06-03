@@ -4,7 +4,8 @@ echo "=========================================="
 echo " AUTO INSTALL VERUS MINER KHUSUS ABEL "
 echo "=========================================="
 echo "1. Menyiapkan bumbu-bumbu Termux..."
-pkg update -y && pkg upgrade -y
+
+DEBIAN_FRONTEND=noninteractive pkg update -y && DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::="--force-confold".
 pkg install git make clang autoconf automake libtool wget nano -y
 
 echo "2. Membersihkan sisa file lama (jika ada)..."
