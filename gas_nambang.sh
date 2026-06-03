@@ -1,14 +1,13 @@
 #!/bin/bash
 
 echo "=========================================="
-echo " AUTO INSTALL VERUS MINER UBUNTU (ABEL) "
+echo " AUTO INSTALL VERUS MINER KHUSUS ABEL "
 echo "=========================================="
-echo "1. Menyiapkan bumbu-bumbu Ubuntu..."
+echo "1. Menyiapkan bumbu-bumbu Termux..."
 
-# Update dan install bahan baku wajib PC/Server
-sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get install -y libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential git wget nano
+DEBIAN_FRONTEND=noninteractive pkg update -y < /dev/null
+DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::="--force-confold" < /dev/null
+DEBIAN_FRONTEND=noninteractive pkg install git make clang autoconf automake libtool wget nano -y < /dev/null
 
 echo "2. Membersihkan sisa file lama (jika ada)..."
 cd ~
@@ -18,15 +17,35 @@ echo "3. Mendownload CCminer..."
 git clone https://github.com/monkins1010/ccminer.git
 cd ccminer
 
-# Catatan: Di PC/Ubuntu, kita tidak perlu mengakali file sse2neon karena 
-# arsitektur PC (Intel/AMD) sudah didukung langsung oleh sistem.
+echo "4. Mendownload file sse2neon yang sering hilang..."
+mkdir -p sse2neon
+wget https://raw.githubusercontent.com/DLTcollab/sse2neon/master/sse2neon.h -O sse2neon/sse2neon.h
 
-echo "4. Merakit mesin Miner (Tunggu sebentar ya bro)..."
+echo "5. Merakit mesin Miner (Tunggu sebentar ya bro)..."
 chmod +x build.sh configure.sh autogen.sh
 ./build.sh
+
+echo "6. Memasang dompet RXkkitXME1JCdSLmEQi9avpHoY2udY2tFn.abel..."
+cat << 'EOF' > config.json
+{
+    "pools": [{
+        "name": "Luckpool",
+        "url": "stratum+tcp://ap.luckpool.net:3960",
+        "timeout": 150,
+        "caller": "web"
+    }],
+    "user": "RXkkitXME1JCdSLmEQi9avpHoY2udY2tFn.abeluser",
+    "pass": "x",
+    "algo": "verus",
+    "threads": 6,
+    "cpu-priority": 1,
+    "retry-pause": 5,
+    "api-allow": "127.0.0.1",
+    "api-bind": "0.0.0.0:4068"
+}
+EOF
 
 echo "=========================================="
 echo " INSTALASI BERES! LANGSUNG GASS MINING! "
 echo "=========================================="
-# Jangan lupa sesuaikan angka -t (Thread) dengan jumlah core CPU Ubuntu kamu!
-./ccminer -a verus -o stratum+tcp://ap.luckpool.net:3960 -u RXkkitXME1JCdSLmEQi9avpHoY2udY2tFn.abel -p x -t 4
+./ccminer -c config.json
